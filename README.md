@@ -105,3 +105,42 @@ If you have any questions or suggestions, feel free to reach out via the GitHub 
 
 Acknowledgments
 Thanks to the open-source community for the incredible libraries and frameworks that make MatrixFlow possible, including PyTorch and CUDA.
+
+
+# Embedding-Based GPU Computation
+
+This project demonstrates the use of GPU acceleration for matrix flow simulations and embedding-based logic gates (AND, OR, XOR). The goal is to evaluate the performance of these operations at various matrix sizes, leveraging a GPU (e.g., NVIDIA GeForce RTX 3060) for parallel computation.
+
+## Script Details
+
+The script performs the following:
+1. Identifies the GPU and prints memory usage information.
+2. Runs matrix flow simulations for various matrix sizes and records the time taken.
+3. Executes embedding-based logic gates (AND, OR, XOR) and measures their performance.
+
+## Performance Results
+
+### Sample Output for Matrix Sizes:
+- 1024x1024:
+  - Total GPU Memory: 12.00 MB
+  - Free GPU Memory: 11.73 MB
+  - Time for Matrix Flow Simulation: 0.532764 seconds
+  - Time for AND Gate: 0.000000 seconds
+  
+- 2048x2048:
+  - Total GPU Memory: 12.00 MB
+  - Free GPU Memory: 11.71 MB
+  - Time for Matrix Flow Simulation: 0.003999 seconds
+  - Time for AND Gate: 0.000998 seconds
+
+... (and so on for larger matrix sizes)
+
+## Dependencies
+- `cupy`
+- `numpy`
+
+## Usage
+
+1. Install dependencies:
+   ```bash
+   pip install cupy numpy
