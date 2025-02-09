@@ -26,7 +26,6 @@ This approach eliminates redundant computation, replacing ALU-based logic with m
 ## **Implementation**
 The Python implementation leverages **PyTorch** for efficient GPU acceleration.
 
-```python
 import numpy as np
 import torch
 import time
@@ -34,43 +33,57 @@ import time
 # Set up device
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-# Optimized 16-bit addition lookup table using chunked computation and quantization
+# Optimized 16-bit addition lookup table using chunked computation
 def generate_lookup_table():
-    chunk_size = 256  # Process in smaller chunks to reduce memory usage
-    lookup_table = {}
+    table_size = 256  # Process in chunks to avoid memory overflow
+    lookup_table = torch.zeros((table_size, table_size), dtype=torch.uint8)  # Store as 8-bit to save space
     
-    for i in range(0, 65536, chunk_size):
-        chunk = torch.arange(i, min(i + chunk_size, 65536), dtype=torch.int16, device=device).repeat(256, 1)
-        chunk = (chunk + chunk.T) % 65536  # Ensure 16-bit overflow
-        lookup_table[i] = chunk.half()  # Store compressed in half precision
-    
-    return lookup_table
+    for i in range(table_size):
+        for j in range(table_size):
+            lookup_table[i, j] = (i + j) % 256  # Ensuring 8-bit overflow behavior
+
+    return lookup_table.to(device)  # Move table to GPU
 
 lookup_table = generate_lookup_table()
 
 def fast_adder(a, b):
-    """Retrieve the sum of a and b from the precomputed compressed lookup table."""
-    a_tensor = torch.tensor(a, dtype=torch.long, device=device)
-    b_tensor = torch.tensor(b, dtype=torch.long, device=device)
-    chunk_key = (a_tensor // 256) * 256
-    return lookup_table[int(chunk_key)][a_tensor % 256, b_tensor % 256].cpu().item()
+    """Retrieve the sum of a and b from the lookup table with overflow handling."""
+    a_tensor = torch.tensor(a, dtype=torch.int32, device=device)  # Use int32 to avoid overflow
+    b_tensor = torch.tensor(b, dtype=torch.int32, device=device)
+
+    a_high, a_low = a_tensor // 256, a_tensor % 256
+    b_high, b_low = b_tensor // 256, b_tensor % 256
+
+    low_result = lookup_table[a_low, b_low]
+    carry = (a_low + b_low) // 256
+
+    high_result = lookup_table[a_high, b_high] + carry
+    return ((high_result % 256) * 256 + low_result).cpu().item()  # Final computation
 
 # Benchmarking
 num_tests = 1000000
 
 def benchmark_addition():
     start_time = time.time()
-    a = torch.randint(0, 65536, (num_tests,), dtype=torch.int16, device=device)
-    b = torch.randint(0, 65536, (num_tests,), dtype=torch.int16, device=device)
+    a = torch.randint(0, 65536, (num_tests,), dtype=torch.int32, device=device)  # Use int32 to avoid overflow
+    b = torch.randint(0, 65536, (num_tests,), dtype=torch.int32, device=device)
     _ = (a + b) % 65536
     return time.time() - start_time
 
 def benchmark_fast_adder():
     start_time = time.time()
-    a = torch.randint(0, 65536, (num_tests,), dtype=torch.long, device=device)
-    b = torch.randint(0, 65536, (num_tests,), dtype=torch.long, device=device)
-    chunk_keys = (a // 256) * 256
-    _ = torch.stack([lookup_table[int(k)][ai % 256, bi % 256] for k, ai, bi in zip(chunk_keys, a, b)])
+    a = torch.randint(0, 65536, (num_tests,), dtype=torch.int32, device=device)
+    b = torch.randint(0, 65536, (num_tests,), dtype=torch.int32, device=device)
+
+    a_high, a_low = a // 256, a % 256
+    b_high, b_low = b // 256, b % 256
+
+    low_result = lookup_table[a_low, b_low]
+    carry = (a_low + b_low) // 256
+
+    high_result = lookup_table[a_high, b_high] + carry
+    _ = (high_result % 256) * 256 + low_result  # Final computation
+
     return time.time() - start_time
 
 # Run benchmarks
@@ -82,7 +95,14 @@ print("\nBenchmark Results:")
 print(f"Traditional 16-bit Addition Time: {traditional_time:.6f} seconds")
 print(f"Fast Adder Time (Embedding-based): {fast_adder_time:.6f} seconds")
 print(f"Speedup Factor: {traditional_time / fast_adder_time:.2f}x")
-```
+
+# Example test cases
+print("\nTest Cases:")
+test_cases = [(5, 10), (100, 150), (200, 55), (255, 1), (32767, 32767)]
+for a, b in test_cases:
+    result = fast_adder(a, b)
+    print(f"{a} + {b} = {result} (Expected: {(a + b) % 65536})")
+
 
 ## **Results and Performance Analysis**
 ### **Benchmark Results:**
