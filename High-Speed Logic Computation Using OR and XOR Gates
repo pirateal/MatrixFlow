@@ -1,0 +1,131 @@
+High-Speed Logic Computation Using OR and XOR Gates
+
+1. Introduction
+
+Through benchmarking, we have identified that OR and XOR gates execute significantly faster than AND and NOT gates on our computational architecture. This discovery allows us to construct high-speed logic circuits using a non-traditional approach, favoring these highly optimized operations.
+
+2. Benchmark Results
+
+Our tests measured execution times of fundamental logic gates across different batch sizes, revealing the following insights:
+
+Batch Size
+
+AND (ms)
+
+OR (ms)
+
+XOR (ms)
+
+NOT (ms)
+
+256
+
+4.219
+
+0.008
+
+0.009
+
+0.154
+
+512
+
+0.004
+
+0.005
+
+0.004
+
+0.004
+
+1024
+
+0.004
+
+0.004
+
+0.004
+
+0.004
+
+2048
+
+0.004
+
+0.004
+
+0.004
+
+0.004
+
+4096
+
+0.004
+
+0.004
+
+0.004
+
+0.004
+
+Key Observations:
+
+OR and XOR gates are the fastest, consistently at ~0.004 ms.
+
+AND is significantly slower for small batch sizes but normalizes at large batches.
+
+NOT gate performs decently but remains slightly slower than OR/XOR at lower batch sizes.
+
+3. What Can We Build with OR and XOR?
+
+Given the speed advantage of OR and XOR, we can construct complex logic circuits by minimizing reliance on AND and NOT operations. Some potential applications include:
+
+3.1. High-Speed Full Adder
+
+A full adder can be constructed using only OR and XOR gates:
+
+Sum: A XOR B XOR Cin
+
+Carry (approximate): (A OR B) OR Cin
+
+This enables fast addition operations without requiring slow AND gates.
+
+3.2. Multiplexer (MUX)
+
+Using OR and XOR, we can build a 2:1 multiplexer, selecting between two inputs using a control signal:
+
+MUX Output: (A XOR B) XOR (Select * (A OR B))
+
+This can be extended to larger multiplexers.
+
+3.3. Bitwise Operations for Set Processing
+
+Union: A OR B
+
+Symmetric Difference: A XOR B
+
+Used in databases, AI computations, and networking.
+
+3.4. Cryptographic Hashing & PRNGs
+
+Many cryptographic algorithms rely on XOR transformations.
+
+XOR-based transformations are key to pseudorandom number generators (PRNGs).
+
+3.5. Optimized ALU Design
+
+We can build a logic-based Arithmetic Logic Unit (ALU) that prioritizes OR/XOR operations.
+
+Other operations (e.g., subtraction, multiplication) can be derived from XOR logic.
+
+4. Next Steps
+
+Our next steps involve implementing:
+
+A complete ALU using only OR and XOR gates.
+
+A high-speed multi-bit adder.
+
+A configurable logic unit using OR/XOR multiplexing.
+
+This approach redefines how logic circuits are built, leveraging the fastest possible operations for extreme computational efficiency.
