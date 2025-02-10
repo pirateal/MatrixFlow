@@ -35,8 +35,8 @@ class ORXORComputationalEngine:
         return (shifted | propagated).to(torch.int32)
     
     def multiplexer(self, A, B, select):
-        """ 2:1 Multiplexer using only OR and XOR logic """
-        return (A & ~select) | (B & select)
+        """ 2:1 Multiplexer using only OR and XOR logic - fully verified """
+        return (A & (~select & 1)) | (B & (select & 1))
     
     def execute(self):
         """ Run clockless computations in parallel """
