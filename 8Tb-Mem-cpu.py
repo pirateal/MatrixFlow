@@ -135,10 +135,10 @@ def retrieve_file_from_memory(output_path, total_bytes, chunk_size=64*1024*1024)
     print("Retrieval completed successfully")
 
 ##############################################
-# Main Test Function
+# Main Test Function with Emulation Integration
 ##############################################
 def main():
-    print("Matrix Memory System Test")
+    print("Matrix Memory System Test with Emulation Integration")
     print("=" * 50)
     
     # File storage test
@@ -147,8 +147,25 @@ def main():
         print(f"Error: Input file {test_file} not found!")
         return
     
-    # Store and retrieve file
+    # Store the file into memory
     total_bytes = store_file_in_memory(test_file)
+    
+    # Emulate reading the stored data as part of a computational process
+    print("\nStarting emulation...")
+    emu_total_capacity = total_capacity  # Limit emulation to memory capacity
+    emu_start_addr = 0  # Starting address for emulation
+    try:
+        mu = Uc(UC_ARCH_X86, UC_MODE_64)
+        mu.mem_map(emu_start_addr, emu_total_capacity)
+        mu.reg_write(UC_X86_REG_RSP, 0x100000)  # Initialize stack pointer
+
+        # Here you would emulate the process of accessing the memory
+        print("Emulation started.")
+        mu.emu_start(emu_start_addr, emu_start_addr + 0x1000)  # Example start
+    except UcError as e:
+        print(f"Emulation stopped: {e}")
+
+    # Retrieve the file back from memory
     retrieve_file_from_memory("output.mp4", total_bytes)  # Change this to your desired output path
 
 if __name__ == "__main__":
