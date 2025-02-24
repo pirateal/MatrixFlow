@@ -1,0 +1,1 @@
+# Example script to analyze a signal using FFT
