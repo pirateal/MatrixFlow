@@ -103,3 +103,67 @@ User Interface: Develop a GUI or API for real-time configuration and monitoring 
 8. Conclusion
 MatrixDSP represents a novel approach to digital signal processing by leveraging GPU-accelerated matrix operations. This technique offers significant advantages in flexibility, scalability, and performance. With a modular architecture and a solid mathematical foundation, MatrixDSP is designed to evolve rapidly, integrating advanced DSP functionalities with ease.
 
+# Technical Documentation
+
+## 1. Introduction
+MatrixDSP is a novel approach to digital signal processing using GPU-accelerated matrix logic. By mapping DSP operations to matrix multiplications and other tensor operations, we achieve unprecedented parallelism and flexibility.
+
+## 2. The Matrix Logic Technique
+Traditional DSPs rely on fixed hardware multipliers and adders. MatrixDSP transforms these operations into matrix computations:
+
+- **Multiply-Accumulate (MAC):**
+  
+  \[
+  \mathbf{Y} = \mathbf{X} \cdot \mathbf{W} + \mathbf{B}
+  \]
+  
+  Here, the input signal, filter weights, and bias are represented as matrices.
+
+- **Fast Fourier Transform (FFT):**
+  Implemented as matrix-based butterfly operations using CuPy’s FFT functions for full parallelization.
+
+- **Filtering:**
+  FIR and IIR filters are executed via convolution operations on matrices, ensuring efficient processing.
+
+## 3. DSP Architecture
+
+### 3.1 Core Processing Unit
+Handles data routing and integration of processing modules using GPU-accelerated functions.
+
+### 3.2 Multiply-Accumulate Unit
+Performs vectorized MAC operations critical for filtering and convolution.
+
+### 3.3 FFT Unit
+Transforms signals between time and frequency domains using GPU-based FFT operations.
+
+### 3.4 Filtering Unit
+Supports FIR and IIR filters implemented as matrix convolutions.
+
+### 3.5 Modulation Unit
+Implements amplitude and frequency modulation via algebraic transformations.
+
+### 3.6 Adaptive AI Integration
+Utilizes machine learning techniques to dynamically update filter coefficients and optimize DSP performance.
+
+## 4. Data Representation
+Signals are represented as matrices:
+- **Rows:** Separate channels or parallel streams.
+- **Columns:** Time samples.
+
+## 5. Implementation Overview
+- **src/dsp_core.py:** Integrates all DSP modules.
+- **src/matrix_mac.py:** Implements MAC operations.
+- **src/fft_unit.py:** FFT and inverse FFT operations.
+- **src/filter_unit.py:** FIR and IIR filtering functions.
+- **src/modulation_unit.py:** AM and FM modulation routines.
+- **src/adaptive_ai.py:** Adaptive filtering using gradient descent.
+
+## 6. Future Enhancements
+- Integration with advanced neural networks for adaptive tuning.
+- Expansion of DSP functionalities (e.g., dynamic range compression, multi-rate processing).
+- Development of a comprehensive database of DSP functions.
+
+## 7. Conclusion
+MatrixDSP leverages the power of GPU-accelerated matrix operations to redefine digital signal processing. Its modular design and high scalability open new possibilities in software-defined DSP architectures.
+
+
